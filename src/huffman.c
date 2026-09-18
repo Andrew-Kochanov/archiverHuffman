@@ -1,5 +1,5 @@
-#include "bitIO.h"
 #include "huffman.h"
+#include "bitIO.h"
 #include "huffmanTree.h"
 #include "prefCodeTable.h"
 #include <stdint.h>

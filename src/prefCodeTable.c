@@ -22,8 +22,7 @@ const PrefCode* tableGet(Table* table, Node* leaf)
     uint8_t reversedBits[256];
     int reversedLength = 0;
 
-    for (Node* currentNode = leaf; currentNode->parent != NULL;
-        currentNode = currentNode->parent) {
+    for (Node* currentNode = leaf; currentNode->parent != NULL; currentNode = currentNode->parent) {
         reversedBits[reversedLength++] = (uint8_t)(currentNode->isLeft ? 0 : 1);
     }
 

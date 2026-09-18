@@ -1,7 +1,7 @@
 #pragma once
 #include "huffmanTree.h"
-#include <string.h>
 #include <stdint.h>
+#include <string.h>
 
 // Одна запись таблицы кодов
 

@@ -10,7 +10,6 @@ struct Node {
     Node* left;
     Node* right;
     uint8_t isLeft;
-
 };
 
 // Функция создания узла

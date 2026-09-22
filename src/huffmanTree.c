@@ -1,10 +1,19 @@
 #include "huffmanTree.h"
+#include "minHeap.h"
 #include <stdlib.h>
 
-// ||           Бинарное дерево           ||
+// Узел бинарного дерева
+struct Node {
+    uint64_t frequency;
+    uint8_t byte;
+    Node* parent;
+    Node* left;
+    Node* right;
+    uint8_t isLeft;
+
+};
 
 // Функция создания узла
-
 static Node* nodeCreate(uint64_t frequency, uint8_t byte)
 {
     Node* node = (Node*)calloc(1, sizeof(Node));
@@ -16,7 +25,6 @@ static Node* nodeCreate(uint64_t frequency, uint8_t byte)
 }
 
 // Функция очистки дерева
-
 void freeTree(Node* root)
 {
     if (root == NULL)
@@ -26,109 +34,42 @@ void freeTree(Node* root)
     free(root);
 }
 
-// ||           Min-куча           ||
-
-typedef struct {
-    Node** nodes;
-    int size;
-    int capacity;
-} MinHeap;
-
-// Создание min-кучи
-
-static MinHeap* minHeapCreate(int initialCapacity)
+uint64_t nodeGetFrequency(const Node* node)
 {
-    MinHeap* heap = (MinHeap*)malloc(sizeof(MinHeap));
-    if (heap == NULL)
-        return NULL;
-
-    heap->nodes = (Node**)malloc(sizeof(Node*) * (size_t)initialCapacity);
-    if (heap->nodes == NULL) {
-        free(heap);
-        return NULL;
-    }
-
-    heap->size = 0;
-    heap->capacity = initialCapacity;
-    return heap;
+    return node->frequency;
 }
 
-// Очистка min-кучи
-
-static void freeMinHeap(MinHeap* heap)
+uint8_t nodeGetByte(const Node* node)
 {
-    if (heap == NULL)
-        return;
-    free(heap->nodes);
-    free(heap);
+    return node->byte;
 }
 
-// Перестановка 2-ух узлов в куче
-
-static void minHeapSwap(Node** first, Node** second)
+int nodeIsLeaf(const Node* node)
 {
-    Node* temporary = *first;
-    *first = *second;
-    *second = temporary;
+    return node->left == NULL && node->right == NULL;
 }
 
-// Добавление узла в кучу
-
-static int minHeapPush(MinHeap* heap, Node* node)
+Node* nodeGetLeft(const Node* node)
 {
-    if (heap->size >= heap->capacity) {
-        int newCapacity = heap->capacity * 2;
-        Node** newNodes = (Node**)realloc(heap->nodes, sizeof(Node*) * (size_t)newCapacity);
-        if (newNodes == NULL)
-            return -1;
-        heap->nodes = newNodes;
-        heap->capacity = newCapacity;
-    }
-
-    int index = heap->size++;
-    heap->nodes[index] = node;
-
-    while (index > 0) {
-        int parentIndex = (index - 1) / 2;
-        if (heap->nodes[parentIndex]->frequency <= heap->nodes[index]->frequency)
-            break;
-        minHeapSwap(&heap->nodes[parentIndex], &heap->nodes[index]);
-        index = parentIndex;
-    }
-    return 0;
+    return node->left;
 }
 
-// Извлечение min узла в куче
-
-static Node* minHeapPop(MinHeap* heap)
+Node* nodeGetRight(const Node* node)
 {
-    if (heap->size == 0)
-        return NULL;
-
-    Node* minimum = heap->nodes[0];
-    heap->nodes[0] = heap->nodes[--heap->size];
-
-    int index = 0;
-    for (;;) {
-        int leftIndex = 2 * index + 1;
-        int rightIndex = 2 * index + 2;
-        int smallestIndex = index;
-
-        if (leftIndex < heap->size && heap->nodes[leftIndex]->frequency < heap->nodes[smallestIndex]->frequency)
-            smallestIndex = leftIndex;
-        if (rightIndex < heap->size && heap->nodes[rightIndex]->frequency < heap->nodes[smallestIndex]->frequency)
-            smallestIndex = rightIndex;
-
-        if (smallestIndex == index)
-            break;
-        minHeapSwap(&heap->nodes[index], &heap->nodes[smallestIndex]);
-        index = smallestIndex;
-    }
-    return minimum;
+    return node->right;
 }
 
-// ||       Построение дерева Хаффмана        ||
+Node* nodeGetParent(const Node* node)
+{
+    return node->parent;
+}
 
+int nodeIsLeft(const Node* node)
+{
+    return node->isLeft;
+}
+
+// Построение дерева Хаффмана
 Node* huffmanTreeBuild(const uint64_t frequencies[256], Node* leafNodes[256])
 {
     MinHeap* heap = minHeapCreate(256);
@@ -144,12 +85,12 @@ Node* huffmanTreeBuild(const uint64_t frequencies[256], Node* leafNodes[256])
         if (frequencies[byteIndex] == 0)
             continue;
 
-        Node* leaf = nodeCreate(frequencies[byteIndex],
-            (uint8_t)byteIndex);
+        Node* leaf = nodeCreate(frequencies[byteIndex], (uint8_t)byteIndex);
         if (leaf == NULL || minHeapPush(heap, leaf) != 0) {
             freeTree(leaf);
-            for (int heapIndex = 0; heapIndex < heap->size; heapIndex++)
-                freeTree(heap->nodes[heapIndex]);
+            int nodeCount = minHeapGetSize(heap);
+            for (int heapIndex = 0; heapIndex < nodeCount; heapIndex++)
+                freeTree(minHeapGetNode(heap, heapIndex));
             freeMinHeap(heap);
             return NULL;
         }
@@ -170,7 +111,7 @@ Node* huffmanTreeBuild(const uint64_t frequencies[256], Node* leafNodes[256])
         return onlyLeaf;
     }
 
-    while (heap->size > 1) {
+    while (minHeapGetSize(heap) > 1) {
         Node* leftLeaf = minHeapPop(heap);
         Node* rightLeaf = minHeapPop(heap);
 
@@ -178,8 +119,9 @@ Node* huffmanTreeBuild(const uint64_t frequencies[256], Node* leafNodes[256])
         if (parent == NULL) {
             freeTree(leftLeaf);
             freeTree(rightLeaf);
-            for (int heapIndex = 0; heapIndex < heap->size; heapIndex++)
-                freeTree(heap->nodes[heapIndex]);
+            int nodeCount = minHeapGetSize(heap);
+            for (int heapIndex = 0; heapIndex < nodeCount; heapIndex++)
+                freeTree(minHeapGetNode(heap, heapIndex));
             freeMinHeap(heap);
             return NULL;
         }
@@ -193,8 +135,9 @@ Node* huffmanTreeBuild(const uint64_t frequencies[256], Node* leafNodes[256])
 
         if (minHeapPush(heap, parent) != 0) {
             freeTree(parent);
-            for (int heapIndex = 0; heapIndex < heap->size; heapIndex++)
-                freeTree(heap->nodes[heapIndex]);
+            int nodeCount = minHeapGetSize(heap);
+            for (int heapIndex = 0; heapIndex < nodeCount; heapIndex++)
+                freeTree(minHeapGetNode(heap, heapIndex));
             freeMinHeap(heap);
             return NULL;
         }

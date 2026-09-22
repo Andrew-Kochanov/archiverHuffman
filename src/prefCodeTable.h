@@ -4,24 +4,22 @@
 #include <string.h>
 
 // Одна запись таблицы кодов
-
-typedef struct {
-    uint8_t bits[256];
-    int length;
-    int isCached;
-} PrefCode;
+typedef struct PrefCode PrefCode;
 
 // Таблица префиксных кодов
+typedef struct Table Table;
 
-typedef struct {
-    PrefCode entries[256];
-} Table;
-
-// Инициализация таблицы
-
-void tableInit(Table* table);
+// Создание таблицы
+Table* tableCreate(void);
 
 // Возвращает указатель на запись в таблице с кодом для переданного листа
 // Если код ещё не вычислялся — вычисляет его и сохраняет в таблице
-
 const PrefCode* tableGet(Table* table, Node* leaf);
+
+// Длина кода в битах
+int prefCodeGetLength(const PrefCode* code);
+
+// Бит кода по индексу, возвращает 0 или 1
+int prefCodeGetBit(const PrefCode* code, int bitIndex);
+
+void tableFree(Table* table);

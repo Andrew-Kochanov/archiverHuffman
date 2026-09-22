@@ -1,7 +1,7 @@
+#include "huffman.h"
 #include "bitIO.h"
 #include "bitReader.h"
 #include "bitWriter.h"
-#include "huffman.h"
 #include "huffmanTree.h"
 #include "prefCodeTable.h"
 #include <stdint.h>

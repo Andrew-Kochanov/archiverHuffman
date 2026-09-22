@@ -1,7 +1,10 @@
 # Создание статической библиотеки
 add_library(huffman_lib STATIC
     huffmanTree.c
+    bitReader.c
+    bitWriter.c
     bitIO.c
+    minHeap.c
     prefCodeTable.c
     huffman.c
 )

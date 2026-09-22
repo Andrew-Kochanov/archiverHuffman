@@ -2,42 +2,14 @@
 #include <stdint.h>
 #include <stdio.h>
 
-// ||           Битовый ввод         ||
+// Сохранения исходного размера файла и частот символов в заголовке сжатого файла
+void writeUint64(FILE* file, uint64_t value);
 
-// Читатель битов
+// Восстанавливает из заголовка исходный размер файла и частоты символов, возвращает 0 при преждевременном EOF
+uint64_t readUint64(FILE* file);
 
-typedef struct {
-    FILE* file;
-    uint8_t currentByte;
-    int bitsRemaining;
-} BitReader;
+// Сохраняет в заголовке количество уникальных символов
+void writeUint16(FILE* file, uint16_t value);
 
-// Инициализация битового читателя
-
-void bitReaderInit(BitReader* reader, FILE* file);
-
-// Чтение одного бита
-
-int bitReaderReadBit(BitReader* reader);
-
-// ||           Битовый вывод         ||
-
-// Хранение битов
-
-typedef struct {
-    FILE* file;
-    uint8_t pendingByte;
-    int bitCount;
-} BitWriter;
-
-// Инициализация битового писателя
-
-void bitWriterInit(BitWriter* writer, FILE* file);
-
-// Запись одного бита в хранилище
-
-void bitWriterWriteBit(BitWriter* writer, int bit);
-
-// Запись неполного байта
-
-void bitWriterFlush(BitWriter* writer);
+// Восстанавливает количество уникальных символов
+uint16_t readUint16(FILE* file);

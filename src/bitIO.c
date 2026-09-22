@@ -1,67 +1,40 @@
 #include "bitIO.h"
 
-// ||           Битовый ввод         ||
-
-// Инициализация битового читателя
-
-void bitReaderInit(BitReader* reader, FILE* file)
+// Сохранения исходного размера файла и частот символов в заголовке сжатого файла
+void writeUint64(FILE* file, uint64_t value)
 {
-    reader->file = file;
-    reader->currentByte = 0;
-    reader->bitsRemaining = 0;
+    for (int byteIndex = 0; byteIndex < 8; byteIndex++) {
+        fputc((int)(value & 0xFF), file);
+        value >>= 8;
+    }
 }
 
-// Чтение одного бита
-
-int bitReaderReadBit(BitReader* reader)
+// Восстанавливает из заголовка исходный размер файла и частоты символов, возвращает 0 при преждевременном EOF
+uint64_t readUint64(FILE* file)
 {
-    if (reader->bitsRemaining == 0) {
-        int inputByte = fgetc(reader->file);
+    uint64_t value = 0;
+    for (int byteIndex = 0; byteIndex < 8; byteIndex++) {
+        int inputByte = fgetc(file);
         if (inputByte == EOF)
-            return -1;
-        reader->currentByte = (uint8_t)inputByte;
-        reader->bitsRemaining = 8;
+            return 0;
+        value |= ((uint64_t)(uint8_t)inputByte) << (byteIndex * 8);
     }
-
-    int bit = (reader->currentByte >> 7) & 1;
-    reader->currentByte <<= 1;
-    reader->bitsRemaining--;
-    return bit;
+    return value;
 }
 
-// ||           Битовый вывод         ||
-
-// Инициализация битового писателя
-
-void bitWriterInit(BitWriter* writer, FILE* file)
+// Сохраняет в заголовке количество уникальных символов
+void writeUint16(FILE* file, uint16_t value)
 {
-    writer->file = file;
-    writer->pendingByte = 0;
-    writer->bitCount = 0;
+    fputc((int)(value & 0xFF), file);
+    fputc((int)((value >> 8) & 0xFF), file);
 }
 
-// Запись одного бита в хранилище
-
-void bitWriterWriteBit(BitWriter* writer, int bit)
+// Восстанавливает количество уникальных символов
+uint16_t readUint16(FILE* file)
 {
-    if (bit)
-        writer->pendingByte |= (uint8_t)(1u << (7 - writer->bitCount));
-
-    writer->bitCount++;
-    if (writer->bitCount == 8) {
-        fputc(writer->pendingByte, writer->file);
-        writer->pendingByte = 0;
-        writer->bitCount = 0;
-    }
-}
-
-// Запись неполного байта
-
-void bitWriterFlush(BitWriter* writer)
-{
-    if (writer->bitCount > 0) {
-        fputc(writer->pendingByte, writer->file);
-        writer->pendingByte = 0;
-        writer->bitCount = 0;
-    }
+    int lowByte = fgetc(file);
+    int highByte = fgetc(file);
+    if (lowByte == EOF || highByte == EOF)
+        return 0;
+    return (uint16_t)lowByte | (uint16_t)((uint16_t)highByte << 8);
 }

@@ -10,7 +10,11 @@
 #define TEMPORARY_RESTORED_PATH "temporary_restored.bin"
 
 static const char* testFileNames[] = {
-    "tests/input/test.txt"
+    "tests/input/text.txt",
+    "tests/input/mix.txt",
+    "tests/input/repeat.txt",
+    "tests/input/9.txt",
+    "tests/input/empty",
 };
 
 static const int testFileCount = (int)(sizeof(testFileNames) / sizeof(testFileNames[0]));

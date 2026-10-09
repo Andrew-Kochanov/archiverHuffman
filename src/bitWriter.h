@@ -13,4 +13,5 @@ void bitWriterWriteBit(BitWriter* writer, int bit);
 // Запись неполного байта
 void bitWriterFlush(BitWriter* writer);
 
+// Освобождение битового писателя
 void bitWriterFree(BitWriter* writer);

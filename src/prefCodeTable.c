@@ -1,19 +1,16 @@
 #include "prefCodeTable.h"
 #include <stdlib.h>
 
-// Одна запись таблицы кодов
 struct PrefCode {
     uint8_t bits[256];
     int length;
     int isCached;
 };
 
-// Таблица префиксных кодов
 struct Table {
     PrefCode entries[256];
 };
 
-// Создание таблицы
 Table* tableCreate(void)
 {
     return (Table*)calloc(1, sizeof(Table));
@@ -24,8 +21,6 @@ void tableFree(Table* table)
     free(table);
 }
 
-// Возвращает указатель на запись в таблице с кодом для переданного листа
-// Если код ещё не вычислялся — вычисляет его и сохраняет в таблице
 const PrefCode* tableGet(Table* table, Node* leaf)
 {
     PrefCode* entry = &table->entries[nodeGetByte(leaf)];

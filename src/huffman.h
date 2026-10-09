@@ -13,8 +13,8 @@ typedef enum {
     HUFFMAN_ERROR_MEMORY = -9,
 } HuffmanError;
 
-// Сжимает файл по алгоритму Хаффмана (возвращает 0 при успехе, -1 при неудаче)
+// Сжимает файл по алгоритму Хаффмана (возвращает 0 при успехе, -1...-9 при неудаче)
 int huffmanCompress(const char* inputPath, const char* outputPath);
 
-// Восстанавливает сжатый файл(возвращает 0 при успехе, -1 при неудаче)
+// Восстанавливает сжатый файл(возвращает 0 при успехе, -1...-9 при неудаче)
 int huffmanDecompress(const char* inputPath, const char* outputPath);

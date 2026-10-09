@@ -2,14 +2,12 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-// Читатель битов
 struct BitReader {
     FILE* file;
     uint8_t currentByte;
     int bitsRemaining;
 };
 
-// Создание битового читателя
 BitReader* bitReaderCreate(FILE* file)
 {
     BitReader* reader = (BitReader*)malloc(sizeof(BitReader));
@@ -22,7 +20,6 @@ BitReader* bitReaderCreate(FILE* file)
     return reader;
 }
 
-// Чтение одного бита
 int bitReaderReadBit(BitReader* reader)
 {
     if (reader->bitsRemaining == 0) {

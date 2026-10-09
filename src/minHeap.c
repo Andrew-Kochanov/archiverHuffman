@@ -1,14 +1,12 @@
 #include "minHeap.h"
 #include <stdlib.h>
 
-// Min-куча
 struct MinHeap {
     Node** nodes;
     int size;
     int capacity;
 };
 
-// Создание min-кучи
 MinHeap* minHeapCreate(int initialCapacity)
 {
     MinHeap* heap = (MinHeap*)malloc(sizeof(MinHeap));
@@ -26,7 +24,6 @@ MinHeap* minHeapCreate(int initialCapacity)
     return heap;
 }
 
-// Очистка min-кучи
 void freeMinHeap(MinHeap* heap)
 {
     if (heap == NULL)
@@ -35,15 +32,13 @@ void freeMinHeap(MinHeap* heap)
     free(heap);
 }
 
-// Перестановка 2-ух узлов в куче
-void minHeapSwap(Node** first, Node** second)
+static void minHeapSwap(Node** first, Node** second)
 {
     Node* temporary = *first;
     *first = *second;
     *second = temporary;
 }
 
-// Добавление узла в кучу
 int minHeapPush(MinHeap* heap, Node* node)
 {
     if (heap->size >= heap->capacity) {
@@ -68,7 +63,6 @@ int minHeapPush(MinHeap* heap, Node* node)
     return 0;
 }
 
-// Извлечение min узла в куче
 Node* minHeapPop(MinHeap* heap)
 {
     if (heap->size == 0)

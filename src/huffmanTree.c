@@ -2,7 +2,6 @@
 #include "minHeap.h"
 #include <stdlib.h>
 
-// Узел бинарного дерева
 struct Node {
     uint64_t frequency;
     uint8_t byte;
@@ -12,7 +11,7 @@ struct Node {
     uint8_t isLeft;
 };
 
-// Функция создания узла
+// Создание узла
 static Node* nodeCreate(uint64_t frequency, uint8_t byte)
 {
     Node* node = (Node*)calloc(1, sizeof(Node));
@@ -23,7 +22,6 @@ static Node* nodeCreate(uint64_t frequency, uint8_t byte)
     return node;
 }
 
-// Функция очистки дерева
 void freeTree(Node* root)
 {
     if (root == NULL)
@@ -68,7 +66,6 @@ int nodeIsLeft(const Node* node)
     return node->isLeft;
 }
 
-// Построение дерева Хаффмана
 Node* huffmanTreeBuild(const uint64_t frequencies[256], Node* leafNodes[256])
 {
     MinHeap* heap = minHeapCreate(256);

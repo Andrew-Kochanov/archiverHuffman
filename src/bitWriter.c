@@ -2,14 +2,12 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-// Хранение битов
 struct BitWriter {
     FILE* file;
     uint8_t pendingByte;
     int bitCount;
 };
 
-// Создание битового писателя
 BitWriter* bitWriterCreate(FILE* file)
 {
     BitWriter* writer = (BitWriter*)malloc(sizeof(BitWriter));
@@ -22,7 +20,6 @@ BitWriter* bitWriterCreate(FILE* file)
     return writer;
 }
 
-// Запись одного бита в хранилище
 void bitWriterWriteBit(BitWriter* writer, int bit)
 {
     if (bit)
@@ -36,7 +33,6 @@ void bitWriterWriteBit(BitWriter* writer, int bit)
     }
 }
 
-// Запись неполного байта
 void bitWriterFlush(BitWriter* writer)
 {
     if (writer->bitCount > 0) {

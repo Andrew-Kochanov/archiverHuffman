@@ -16,10 +16,11 @@ Table* tableCreate(void);
 // Если код ещё не вычислялся — вычисляет его и сохраняет в таблице
 const PrefCode* tableGet(Table* table, Node* leaf);
 
-// Длина кода в битах
+// Получение длины кода в битах
 int prefCodeGetLength(const PrefCode* code);
 
-// Бит кода по индексу, возвращает 0 или 1
+// Получение бита кода по индексу, возвращает 0 или 1
 int prefCodeGetBit(const PrefCode* code, int bitIndex);
 
+// Освобождение таблицы
 void tableFree(Table* table);

@@ -16,7 +16,7 @@ int minHeapPush(MinHeap* heap, Node* node);
 // Извлечение min узла в куче
 Node* minHeapPop(MinHeap* heap);
 
-// Получение размера кучи 
+// Получение размера кучи
 int minHeapGetSize(const MinHeap* heap);
 
 // Получение узла кучи
